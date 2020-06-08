@@ -1,4 +1,4 @@
-from random import randint
+from random import randint,choice
 # Initialize Game Board
 print("Tic Tac Toe \n")
 def print_grid(grid):
@@ -16,15 +16,32 @@ def check_winner(user,comp):
 	return "no winner",False
 
 def find_best_move(user,comp):
-	moves = []
+	freq = [5,1,3,7,9,2,4,6,8] # which cells are contained within the most winning configs
+	for each in user+comp:
+		freq.remove(each)
 	wins = [[1,2,3],[1,4,7],[1,5,9],[2,5,8],[3,5,7],[3,6,9],[4,5,6],[7,8,9]]
+	in_comp = []
+	in_comp_only = []
+	user_only = []
 	for win in wins:
-		#moves = [value for value in comp if value in win]
 		if any(item in comp for item in win):
-			moves.append(win)
-	return moves
+			in_comp.append(win)
+			if all((item not in user) for item in win):
+				#print("yup")
+				in_comp_only.append(win)
 
-			
+	solution = False
+	if len(in_comp_only) != 0:
+		for f in freq:
+			for each in in_comp_only:
+				for val in each:
+					if val == f:
+						return val
+	else:
+		available = list(set(list(range(1,9))).difference(set(user)))
+		for f in freq:
+			if f in available:
+				return f
 
 # Game board
 b = [[0,0,0],
@@ -57,6 +74,14 @@ while len(taken_squares) <= 8 or winner == False:
 	user_choice = user_choice.split(",")
 	user_choice = [int(user_choice[0])-1,int(user_choice[1])-1]
 	
+	if check_winner(user_squares,comp_squares)[1] == True: # Check for winner
+		print(check_winner(user_squares,comp_squares)[0])
+		winner = True
+		break
+	elif len(taken_squares) == 9: # Terminate game if 9 moves have been taken without a winner
+		print("Draw")
+		break
+
 	for key in valid_squares.keys():
 		if valid_squares.get(key) == user_choice:
 			if key in taken_squares:
@@ -72,15 +97,9 @@ while len(taken_squares) <= 8 or winner == False:
 					break
 				valid = 0
 				while not valid: # Gets a valid computer move based on free spaces
-					moves = find_best_move(user_squares,comp_squares)
-					#if len(moves) == 0:
-						#comp_choice = randint(1,9)
-					print(moves)
-					print()
-					#move = moves[randint(0,len(moves)-1)]
-					#print(move)
-					comp_choice = randint(1,9)
-					#comp_choice = move[randint(0,len(moves)-1)]
+					comp_choice = find_best_move(user_squares,comp_squares)
+					print(comp_choice)
+					#comp_choice = randint(1,9)
 					if comp_choice in taken_squares:
 						continue
 					else:
@@ -90,6 +109,7 @@ while len(taken_squares) <= 8 or winner == False:
 						valid = 1	
 	print_grid(b)
 	print()
+	print(user_squares,comp_squares)
 	if check_winner(user_squares,comp_squares)[1] == True: # Check for winner
 		print(check_winner(user_squares,comp_squares)[0])
 		winner = True
@@ -97,5 +117,3 @@ while len(taken_squares) <= 8 or winner == False:
 	if len(taken_squares) == 9: # Terminate game if 9 moves have been taken without a winner
 		print("Draw")
 		break
-
-	
