@@ -24,13 +24,20 @@ def find_best_move(user,comp):
 	in_comp_only = []
 	user_only = []
 	for win in wins:
+		u = [i for i in win if i in user]
+		c = [i for i in win if i in comp]										# get list of values in winning config for the comp
+		if len(u) == 2 and len(c) != 2: 					# if length of list is 2 then the user is one move away from a win
+			what = list(set(win).difference(set(user).union(set(comp)))) 	# determine this value
+			if what not in comp and len(what) > 0:
+				return what.pop()							# block the user by playing this value
+		elif len(c) == 2:
+			some = list(set(win).difference(set(user).union(set(comp))))
+			if some not in user and len(some) > 0:
+				return some.pop()
 		if any(item in comp for item in win):
 			in_comp.append(win)
 			if all((item not in user) for item in win):
-				#print("yup")
 				in_comp_only.append(win)
-
-	solution = False
 	if len(in_comp_only) != 0:
 		for f in freq:
 			for each in in_comp_only:
@@ -42,7 +49,6 @@ def find_best_move(user,comp):
 		for f in freq:
 			if f in available:
 				return f
-
 # Game board
 b = [[0,0,0],
 	[0,0,0],
@@ -59,7 +65,7 @@ while True:
     else:
         break
 # Set computer symbol
-if user == "x" or "X":
+if user == "x" or user == "X":
 	comp = "o"
 else:
 	comp = "x" 
@@ -69,7 +75,7 @@ taken_squares = []
 user_squares = []
 comp_squares = []
 winner = False
-while len(taken_squares) <= 8 or winner == False:
+while len(taken_squares) <= 8 and winner == False:
 	user_choice = input("Pick Row and Column (r,c) ")
 	user_choice = user_choice.split(",")
 	user_choice = [int(user_choice[0])-1,int(user_choice[1])-1]
@@ -98,8 +104,6 @@ while len(taken_squares) <= 8 or winner == False:
 				valid = 0
 				while not valid: # Gets a valid computer move based on free spaces
 					comp_choice = find_best_move(user_squares,comp_squares)
-					print(comp_choice)
-					#comp_choice = randint(1,9)
 					if comp_choice in taken_squares:
 						continue
 					else:
@@ -109,7 +113,6 @@ while len(taken_squares) <= 8 or winner == False:
 						valid = 1	
 	print_grid(b)
 	print()
-	print(user_squares,comp_squares)
 	if check_winner(user_squares,comp_squares)[1] == True: # Check for winner
 		print(check_winner(user_squares,comp_squares)[0])
 		winner = True
