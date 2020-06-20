@@ -12,10 +12,6 @@ and what the user has previously played. A frequency table is used for the compu
 to choose a square based on the relative frequency of that square being a part of
 a winning configuration.
 
-Next step is to add a gui for a better user experience.
-
-Might try to add ML to this to get a more advanced computer player. (I've never used ML before)
-I don't know if ML would add anything to this. It shouldn't be possible to beat
-the computer with how it is set up now.
+game_w_gui.py is the same game, but can be played with a tkinter gui. No command line interface required.
 
 Each new game file will be an improved version of the game.
